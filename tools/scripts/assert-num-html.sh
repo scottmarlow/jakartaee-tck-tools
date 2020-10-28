@@ -81,10 +81,14 @@ fi
 #####
 # Transform the numbered XML assertion document to HTML
 #####
-HTML_ASSERT_FILE="assertions.html"
-XSL_FILE="../../../docs/xsl/assertions/spec_assertions.xsl"
-INPUT_FILE="${OUTPUT_FILE}"
-OUTPUT_FILE="${OUTPUT_DIR}/${HTML_ASSERT_FILE}"
+#####
+# Sort the IDs
+#####
+XML_ASSERT_NUMS_FILE="sort-assert-id-nums.xml"
+INPUT_FILE=${OUTPUT_FILE}
+OUTPUT_DIR=${2}
+OUTPUT_FILE="${OUTPUT_DIR}/${XML_ASSERT_NUMS_FILE}"
+XSL_FILE="../../../docs/xsl/assertions/sort-assert-id.xsl"
 CMD="./run ${INPUT_FILE} ${XSL_FILE} ${OUTPUT_FILE}"
 echo "\n\n$CMD\n\n"
 $CMD
