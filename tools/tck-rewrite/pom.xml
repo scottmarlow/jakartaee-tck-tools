@@ -15,7 +15,7 @@
         <version.arquillian>1.7.0.Final</version.arquillian>
         <version.http-commons>3.1</version.http-commons>
         <version.javatest>5.0</version.javatest>
-        <version.openrewrite>8.7.2</version.openrewrite>
+        <version.openrewrite>8.23.1</version.openrewrite>
         <version.servlet-api>6.0.0</version.servlet-api>
         <version.tcktools>11.0.0-SNAPSHOT</version.tcktools>
     </properties>
@@ -33,6 +33,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.openrewrite</groupId>
+            <artifactId>rewrite-core</artifactId>
+            <version>${version.openrewrite}</version>
+        </dependency>
         <dependency>
             <groupId>org.openrewrite</groupId>
             <artifactId>rewrite-java-17</artifactId>
