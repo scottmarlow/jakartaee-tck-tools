@@ -35,11 +35,6 @@
     <dependencies>
         <dependency>
             <groupId>org.openrewrite</groupId>
-            <artifactId>rewrite-core</artifactId>
-            <version>${version.openrewrite}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openrewrite</groupId>
             <artifactId>rewrite-java-17</artifactId>
             <version>${version.openrewrite}</version>
         </dependency>
