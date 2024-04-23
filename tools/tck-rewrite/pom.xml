@@ -107,18 +107,8 @@
         </dependency>
         <dependency>
             <groupId>jakarta.tck</groupId>
-            <artifactId>jakarta-pages-tck</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.tck</groupId>
             <artifactId>common</artifactId>
             <version>11.0.0-M1</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.tck</groupId>
-            <artifactId>servlet</artifactId>
-            <version>11.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>jakarta.tck</groupId>
@@ -131,21 +121,6 @@
             <version>5.8.1</version>
         </dependency>
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>${version.servlet-api}</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
             <groupId>jakarta.ejb</groupId>
             <artifactId>jakarta.ejb-api</artifactId>
             <version>4.0.1</version>
@@ -154,26 +129,6 @@
             <groupId>jakarta.resource</groupId>
             <artifactId>jakarta.resource-api</artifactId>
             <version>2.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.jms</groupId>
-            <artifactId>jakarta.jms-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.authentication</groupId>
-            <artifactId>jakarta.authentication-api</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.xml.ws</groupId>
-            <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
