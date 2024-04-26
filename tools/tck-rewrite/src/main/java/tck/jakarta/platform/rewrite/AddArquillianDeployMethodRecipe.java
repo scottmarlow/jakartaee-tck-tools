@@ -27,9 +27,13 @@ public class AddArquillianDeployMethodRecipe extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
+        System.out.println("xxx AddArquillianDeployMethodRecipe.getVisitor");
+        Thread.dumpStack();
         return Preconditions.check(new UsesType<>("org.openrewrite.Recipe", true), new JavaIsoVisitor<ExecutionContext>() {
             @Override
             public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext executionContext) {
+                System.out.println("xxx AddArquillianDeployMethodRecipe JavaIsoVisitor.visitClassDeclaration");
+                Thread.dumpStack();
                 return new AddArquillianDeployMethod<>().visitClassDeclaration(classDecl, executionContext);
             }
         });
