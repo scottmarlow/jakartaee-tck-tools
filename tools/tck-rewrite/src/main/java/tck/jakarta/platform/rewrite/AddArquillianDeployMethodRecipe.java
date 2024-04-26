@@ -27,16 +27,14 @@ public class AddArquillianDeployMethodRecipe extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        System.out.println("xxx AddArquillianDeployMethodRecipe.getVisitor");
-        Thread.dumpStack();
-        return Preconditions.check(new UsesType<>("ee.jakarta.tck*", true), new JavaIsoVisitor<ExecutionContext>() {
+        return new JavaIsoVisitor<ExecutionContext>() {
             @Override
             public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext executionContext) {
-                System.out.println("xxx AddArquillianDeployMethodRecipe JavaIsoVisitor.visitClassDeclaration");
+                System.out.println("xxx AddArquillianDeployMethodRecipe JavaIsoVisitor.visitClassDeclaration for J.ClassDeclaration: " + classDecl.getName());
                 Thread.dumpStack();
                 return new AddArquillianDeployMethod<>().visitClassDeclaration(classDecl, executionContext);
             }
-        });
+        };
     }
 
 }
