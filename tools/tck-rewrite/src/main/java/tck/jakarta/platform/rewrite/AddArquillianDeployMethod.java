@@ -63,7 +63,8 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
             }
         }
 
-        boolean isEETest = parentTypes.contains("com.sun.ts.lib.harness.EETest");
+        boolean isEETest = classDecl.getSimpleName().contains("Client"); // this will match too much but still try
+
         List<J.Modifier> modifiers = classDecl.getModifiers();
         boolean isAbstract = modifiers.stream().anyMatch(modifier -> modifier.getType() == J.Modifier.Type.Abstract);
         System.out.printf("%s isEETest=%s, isAbstract=%s\n".formatted(cd.getType().getClassName(), isEETest, isAbstract));
