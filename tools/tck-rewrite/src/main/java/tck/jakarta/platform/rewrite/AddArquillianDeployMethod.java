@@ -32,9 +32,9 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
 
     @Override
     public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext executionContext) {
-        if(log.isLoggable(Level.FINEST)) {
-            log.finest(TreeVisitingPrinter.printTree(getCursor()));
-        }
+
+        System.out.println(TreeVisitingPrinter.printTree(getCursor()));
+
 
         // Check if the class already has a method marked with @Deployment
         boolean deploymentMethodExists = classDecl.getBody().getStatements().stream()
@@ -43,7 +43,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
                 .anyMatch(methodDeclaration -> methodDeclaration.getAllAnnotations().stream().anyMatch(TEST_ANN_MATCH::matches));
         // If the class already has a `@Deployment *()` method, don't make any changes to it.
         if (deploymentMethodExists) {
-            log.fine("@Deployment annotated method exists, return existing class def");
+            System.out.println("@Deployment annotated method exists, return existing class def");
             return classDecl;
         }
 
@@ -66,7 +66,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
         boolean isEETest = parentTypes.contains("com.sun.ts.lib.harness.EETest");
         List<J.Modifier> modifiers = classDecl.getModifiers();
         boolean isAbstract = modifiers.stream().anyMatch(modifier -> modifier.getType() == J.Modifier.Type.Abstract);
-        log.fine("%s isEETest=%s, isAbstract=%s\n".formatted(cd.getType().getClassName(), isEETest, isAbstract));
+        System.out.printf("%s isEETest=%s, isAbstract=%s\n".formatted(cd.getType().getClassName(), isEETest, isAbstract));
 
         // If this is a concrete subclass of EETest, add an arq deployment method
         if(!isAbstract && isEETest) {
@@ -83,10 +83,10 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
                 war.saveOutput(methodCodeWriter, false);
                 String methodCode = methodCodeWriter.toString();
                 if (methodCode.length() == 0) {
-                    log.fine("No Jar2ShrinkWrap artifact, no code generated for package: " + pkg);
+                    System.out.printf("No Jar2ShrinkWrap artifact, no code generated for package: " + pkg);
                     return cd;
                 }
-                log.finest("Applying template to method code: "+methodCode);
+                System.out.printf("Applying template to method code: "+methodCode);
 
                 JavaTemplate deploymentTemplate =
                         JavaTemplate.builder( methodCode)
@@ -108,12 +108,12 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
                 maybeAddImport("org.jboss.shrinkwrap.api.spec.EnterpriseArchive");
                 maybeAddImport("org.jboss.shrinkwrap.api.spec.JavaArchive");
                 maybeAddImport("org.jboss.shrinkwrap.api.spec.WebArchive");
-                log.info("Added @Deployment method to class: "+classDecl.getType().getFullyQualifiedName());
+                System.out.printf("Added @Deployment method to class: "+classDecl.getType().getFullyQualifiedName());
             } catch (RuntimeException e) {
                 StringWriter trace = new StringWriter();
                 e.printStackTrace(new PrintWriter(trace));
-                log.warning("No code generated for package: %s, due to exception: %s".formatted(pkg, e));
-                log.warning(trace.toString());
+                System.out.printf("No code generated for package: %s, due to exception: %s".formatted(pkg, e));
+                System.out.printf(trace.toString());
                 return cd;
             }
             finally {
