@@ -10,6 +10,7 @@ import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.TreeVisitingPrinter;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
+import tck.jakarta.platform.rewrite.mapping.EE11_2_EE10;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -72,6 +73,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
         // If this is a concrete subclass of EETest, add an arq deployment method
         if(!isAbstract && isEETest) {
             String pkg = cd.getType().getPackageName();
+            String ee10pkg = EE11_2_EE10.getEE11mapping(pkg);
             ClassLoader prevCL = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
@@ -79,12 +81,12 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
                 String clInfo = ClassLoaderUtils.showClassLoaderHierarchy(this, "visitClassDeclaration");
                 System.out.println(clInfo);
                  */
-                JarProcessor war = Jar2ShrinkWrap.fromPackage(pkg);
+                JarProcessor war = Jar2ShrinkWrap.fromPackage(ee10pkg);
                 StringWriter methodCodeWriter = new StringWriter();
                 war.saveOutput(methodCodeWriter, false);
                 String methodCode = methodCodeWriter.toString();
                 if (methodCode.length() == 0) {
-                    System.out.printf("No Jar2ShrinkWrap artifact, no code generated for package: " + pkg);
+                    System.out.printf("No Jar2ShrinkWrap artifact, no code generated for package: " + ee10pkg);
                     return cd;
                 }
                 System.out.printf("Applying template to method code: "+methodCode);
@@ -99,7 +101,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
                                         "org.jboss.shrinkwrap.api.spec.JavaArchive"
                                 )
                                 .build();
-
+                System.out.printf("built JavaTemplate");
                 String dotClassRef = classDecl.getType().getClassName()+".class";
                 cd = classDecl.withBody( deploymentTemplate.apply(new Cursor(getCursor(), classDecl.getBody()),
                         classDecl.getBody().getCoordinates().firstStatement()));
@@ -113,7 +115,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
             } catch (RuntimeException e) {
                 StringWriter trace = new StringWriter();
                 e.printStackTrace(new PrintWriter(trace));
-                System.out.printf("No code generated for package: %s, due to exception: %s".formatted(pkg, e));
+                System.out.printf("No code generated for package: %s, due to exception: %s".formatted(ee10pkg, e));
                 System.out.printf(trace.toString());
                 return cd;
             }
