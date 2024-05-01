@@ -30,8 +30,6 @@ public class AddArquillianDeployMethodRecipe extends Recipe {
         return new JavaIsoVisitor<ExecutionContext>() {
             @Override
             public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext executionContext) {
-                System.out.println("xxx AddArquillianDeployMethodRecipe JavaIsoVisitor.visitClassDeclaration for J.ClassDeclaration: " + classDecl.getName());
-                Thread.dumpStack();
                 return new AddArquillianDeployMethod<>().visitClassDeclaration(classDecl, executionContext);
             }
         };
