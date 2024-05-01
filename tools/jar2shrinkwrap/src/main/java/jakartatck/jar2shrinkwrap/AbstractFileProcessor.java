@@ -42,7 +42,7 @@ public abstract class AbstractFileProcessor implements JarProcessor {
 
 
     @Override
-    public void process(ZipInputStream zipInputStream, ZipEntry entry) {
+    public void process(ZipInputStream zipInputStream, ZipEntry entry, ClassNameRemapping classNameRemapping) {
 
         if (entry.isDirectory()) {
             // ignore
@@ -59,7 +59,7 @@ public abstract class AbstractFileProcessor implements JarProcessor {
         }
     }
 
-    protected void processLibrary(String jarName, File libFile, ZipInputStream zipInputStream) {
+    protected void processLibrary(String jarName, File libFile, ZipInputStream zipInputStream, ClassNameRemapping classNameRemapping) {
         if (!libFile.exists()) { // Typical usage for EAR is that module/library entries archives will already exist in test folder but if not, create them)
             try (FileOutputStream libFileOS = new FileOutputStream(libFile)) {
                 byte[] libContent = zipInputStream.readAllBytes();
@@ -69,7 +69,7 @@ public abstract class AbstractFileProcessor implements JarProcessor {
             }
         }
         // load the library content
-        JarVisit visit = new JarVisit(libFile);
+        JarVisit visit = new JarVisit(libFile, classNameRemapping);
         JarProcessor jar = visit.execute();
         libraryContent.put(jarName, jar);
         addLibrary(libFile.getName());

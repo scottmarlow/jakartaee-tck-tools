@@ -80,6 +80,9 @@ public class Jar2ShrinkWrap {
         return target;
     }
     public static JarProcessor fromPackage(String packageName) {
+        return fromPackage(packageName, new ClassNameRemapping() {});
+    }
+    public static JarProcessor fromPackage(String packageName, ClassNameRemapping classNameRemapping) {
         // Locate or download the legacy TCK
         File target = maybeDownloadTck();
         System.out.println("Locate the TCK archive that contains the test for package " + packageName);
@@ -88,7 +91,7 @@ public class Jar2ShrinkWrap {
         }
         target = new File(target, unzippedLegacyTCK);
         File targetArchiveFile = locateTargetPackageFolder(target, packageName);
-        JarVisit visitor = new JarVisit(targetArchiveFile);
+        JarVisit visitor = new JarVisit(targetArchiveFile, classNameRemapping);
         return visitor.execute();
     }
 
