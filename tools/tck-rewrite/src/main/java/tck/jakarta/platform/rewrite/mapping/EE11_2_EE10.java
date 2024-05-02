@@ -7,9 +7,11 @@ package tck.jakarta.platform.rewrite.mapping;
  */
 public class EE11_2_EE10 {
     public static String getEE11mapping(String classname) {
-        if (classname.startsWith("ee.jakarta.tck.persistence.core")) {
-            return classname.replace("ee.jakarta.tck.persistence.core","com.sun.ts.tests.jpa.core");
-        }
-        throw new RuntimeException("EE11_2_EE10 needs to be updated to handle converting class " + classname + " to its equivalent EE 10 Platform TCK test name.");
+
+        return classname.replace("ee.jakarta.tck.persistence.core", "com.sun.ts.tests.jpa.core").
+                replace("ee.jakarta.tck.persistence.entitytest", "com.sun.ts.tests.jpa.core.entitytest").
+                replace("ee.jakarta.tck.persistence.jpa22", "com.sun.ts.tests.jpa.jpa22").
+                replace("ee.jakarta.tck.persistence.se.cache.inherit", "com.sun.ts.tests.jpa.common.schema30").
+                replace("ee.jakarta.tck.persistence", "com.sun.ts.tests.jpa");  // invoke use this catch all for persistence last
     }
 }

@@ -40,9 +40,14 @@ public abstract class AbstractFileProcessor implements JarProcessor {
 
     private Map<String, JarProcessor> libraryContent = new HashMap<>();
 
+    private ClassNameRemapping classNameRemapping;
+
 
     @Override
     public void process(ZipInputStream zipInputStream, ZipEntry entry, ClassNameRemapping classNameRemapping) {
+        if (this.classNameRemapping != classNameRemapping) {
+            this.classNameRemapping = classNameRemapping;
+        }
 
         if (entry.isDirectory()) {
             // ignore
@@ -151,6 +156,10 @@ public abstract class AbstractFileProcessor implements JarProcessor {
         if (name.endsWith(CLASS))
             name = name.substring(0, name.length() - CLASS.length());
         name = name.replace('/', '.');
+        if (classNameRemapping.shouldBeIgnored(name)) {
+            return;
+        }
+        name = classNameRemapping.getName(name);
         classes.add(name);
     }
 

@@ -9,4 +9,8 @@ public interface ClassNameRemapping {
     default String getName(String className) {
         return className;
     }
+
+    default boolean shouldBeIgnored(String className) {
+        return false;
+    }
 }
