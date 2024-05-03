@@ -87,7 +87,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
                 war.saveOutput(methodCodeWriter, false);
                 String methodCode = methodCodeWriter.toString();
                 if (methodCode.length() == 0) {
-                    System.out.printf("No Jar2ShrinkWrap artifact, no code generated for package: " + ee10pkg);
+                    System.out.printf("No Jar2ShrinkWrap artifact, no code generated for package: " + pkg + "(" + ee10pkg+ ")");
                     return cd;
                 }
                 System.out.printf("Applying template to method code: "+methodCode);
@@ -116,7 +116,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
             } catch (RuntimeException e) {
                 StringWriter trace = new StringWriter();
                 e.printStackTrace(new PrintWriter(trace));
-                System.out.printf("No code generated for package: %s, due to exception: %s".formatted(ee10pkg, e));
+                System.out.printf("No code generated for package: %s, due to exception: %s".formatted(pkg, e));
                 System.out.printf(trace.toString());
                 return cd;
             }
