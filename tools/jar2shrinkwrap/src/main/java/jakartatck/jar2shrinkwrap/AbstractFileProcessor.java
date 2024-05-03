@@ -230,7 +230,6 @@ public abstract class AbstractFileProcessor implements JarProcessor {
             }
         }
 
-        printWriter.println(indent + "return %s;".formatted(archiveName(archiveName)));
     }
 
     protected boolean ignoreFile(String filename) {
