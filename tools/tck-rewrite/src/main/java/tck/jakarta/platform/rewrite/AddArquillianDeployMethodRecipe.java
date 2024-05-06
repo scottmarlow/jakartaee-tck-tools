@@ -126,7 +126,7 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 //classDecl = classDecl.withBody(deploymentTemplate.apply(new Cursor(getCursor(), classDecl.getBody()),
                 //        classDecl.getBody().getCoordinates().lastStatement(),
                 //        fullyQualifiedClassName));
-                classDecl.withBody( deploymentTemplate.apply(new Cursor(getCursor(), classDecl.getBody()),
+                classDecl = classDecl.withBody( deploymentTemplate.apply(new Cursor(getCursor(), classDecl.getBody()),
                                         classDecl.getBody().getCoordinates().firstStatement()));
             } catch (RuntimeException e) {
                 System.out.println("error " + e.getMessage() + "occurred for (EE11) " + pkg + " (EE10) " + ee10pkg +
