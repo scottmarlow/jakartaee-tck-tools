@@ -97,9 +97,18 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
 
             String pkg = classDecl.getType().getPackageName();
             String ee10pkg = EE11_2_EE10.getEE11mapping(pkg);
+            JarProcessor jarProcessor = null;
+            try {
+                // Generate the deployment() method
+                jarProcessor = Jar2ShrinkWrap.fromPackage(ee10pkg, ClassNameRemappingImpl.getInstance());
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+            // just print exception call stack for now and skip test
+            if (jarProcessor == null) {
+                return classDecl;
+            }
 
-            // Generate the deployment() method
-            JarProcessor jarProcessor = Jar2ShrinkWrap.fromPackage(ee10pkg, ClassNameRemappingImpl.getInstance());
             StringWriter methodCodeWriter = new StringWriter();
             jarProcessor.saveOutput(methodCodeWriter, false);
             String methodCode = methodCodeWriter.toString();
