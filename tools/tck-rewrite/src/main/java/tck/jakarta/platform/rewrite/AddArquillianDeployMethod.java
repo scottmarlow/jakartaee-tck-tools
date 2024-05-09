@@ -18,7 +18,6 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -74,7 +73,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
         // If this is a concrete subclass of EETest, add an arq deployment method
         if(!isAbstract && isEETest) {
             String pkg = cd.getType().getPackageName();
-            String ee10pkg = EE11_2_EE10.getEE11mapping(pkg);
+            String ee10pkg = EE11_2_EE10.mapEE11toEE10(pkg);
             ClassLoader prevCL = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());

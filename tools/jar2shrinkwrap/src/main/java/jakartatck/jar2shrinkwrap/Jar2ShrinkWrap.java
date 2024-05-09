@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -79,6 +80,33 @@ public class Jar2ShrinkWrap {
         legacyTckRoot = target;
         return target;
     }
+
+    public static boolean isLegacyTestPackage(String packageName) {
+        if (packageName.startsWith("ee.jakarta.tck.persistence")) {
+            throw new RuntimeException("EE 11 package name passed that should of been converted to EE 10 before calling.  Package name = " + packageName);
+        }
+        String packageNameWithSlashs = packageName.replace(".","/");
+        File srcFolder = new File (maybeDownloadTck(), "jakartaeetck/src/" + packageNameWithSlashs);
+        boolean testPackageExists = srcFolder.exists();
+        if (packageName.contains("jpa")) {
+            if (testPackageExists) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static File getEETestVehiclesFile() {
+        return new File (maybeDownloadTck(), "jakartaeetck/src/vehicle.properties");
+    }
+
+
+    public static boolean isNewTestPackage(String packageName) {
+        // TODO: add hard coded checks here for specific new test packages
+        return false;
+    }
+
+
     public static JarProcessor fromPackage(String packageName) {
         return fromPackage(packageName, new ClassNameRemapping() {});
     }

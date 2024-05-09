@@ -29,7 +29,7 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
     private static String fullyQualifiedClassName = AddArquillianDeployMethodRecipe.class.getCanonicalName();
 
     static {
-        System.out.println("Preparing to use " + fullyQualifiedClassName);
+        System.out.println("AddArquillianDeployMethodRecipe: Preparing to use " + fullyQualifiedClassName);
     }
 
     @Override
@@ -91,16 +91,22 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
             boolean isAbstract = modifiers.stream().anyMatch(modifier -> modifier.getType() == J.Modifier.Type.Abstract);
 
             // return if this is not an EE test
-            if(isAbstract || !isEETest) {
+            if (isAbstract || !isEETest) {
                 return classDecl;
             }
 
             String pkg = classDecl.getType().getPackageName();
-            String ee10pkg = EE11_2_EE10.getEE11mapping(pkg);
+            String ee10pkg = EE11_2_EE10.mapEE11toEE10(pkg);
             JarProcessor jarProcessor = null;
             try {
-                // Generate the deployment() method
-                jarProcessor = Jar2ShrinkWrap.fromPackage(ee10pkg, ClassNameRemappingImpl.getInstance());
+
+                if (Jar2ShrinkWrap.isLegacyTestPackage(ee10pkg)) {
+                    // Generate the deployment() method
+                    jarProcessor = Jar2ShrinkWrap.fromPackage(ee10pkg, ClassNameRemappingImpl.getInstance());
+                }
+                else {
+                    System.out.println("AddArquillianDeployMethodRecipe: ignoring package " + ee10pkg);
+                }
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
@@ -121,6 +127,16 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
             final JavaTemplate deploymentTemplate =
                     JavaTemplate.builder(methodCode).imports()
                             .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
+                            .imports(
+                                    "org.jboss.arquillian.container.test.api.Deployment",
+                                    "org.jboss.shrinkwrap.api.Archive",
+                                    "org.jboss.shrinkwrap.api.ShrinkWrap",
+                                    "org.jboss.shrinkwrap.api.spec.EnterpriseArchive",
+                                    "org.jboss.shrinkwrap.api.spec.JavaArchive",
+                                    "org.jboss.shrinkwrap.api.spec.EnterpriseArchive",
+                                    "org.jboss.shrinkwrap.api.spec.WebArchive",
+                                    "org.jboss.shrinkwrap.api.spec.JavaArchive"
+                            )
                             .build();
             maybeAddImport("org.jboss.arquillian.container.test.api.Deployment");
             maybeAddImport("org.jboss.shrinkwrap.api.Archive");
@@ -135,10 +151,10 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 //classDecl = classDecl.withBody(deploymentTemplate.apply(new Cursor(getCursor(), classDecl.getBody()),
                 //        classDecl.getBody().getCoordinates().lastStatement(),
                 //        fullyQualifiedClassName));
-                classDecl = classDecl.withBody( deploymentTemplate.apply(new Cursor(getCursor(), classDecl.getBody()),
-                                        classDecl.getBody().getCoordinates().firstStatement()));
+                classDecl = classDecl.withBody(deploymentTemplate.apply(new Cursor(getCursor(), classDecl.getBody()),
+                        classDecl.getBody().getCoordinates().firstStatement()));
             } catch (RuntimeException e) {
-                System.out.println("error " + e.getMessage() + "occurred for (EE11) " + pkg + " (EE10) " + ee10pkg +
+                System.out.println("AddArquillianDeployMethodRecipe: error " + e.getMessage() + "occurred for (EE11) " + pkg + " (EE10) " + ee10pkg +
                         " classDecl.getType() = " + classDecl.getType() + "methodCode " + methodCode);
                 e.printStackTrace();
             }

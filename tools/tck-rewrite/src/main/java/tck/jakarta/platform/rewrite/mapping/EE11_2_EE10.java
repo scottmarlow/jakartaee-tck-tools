@@ -6,7 +6,7 @@ package tck.jakarta.platform.rewrite.mapping;
  * @author Scott Marlow
  */
 public class EE11_2_EE10 {
-    public static String getEE11mapping(String classname) {
+    public static String mapEE11toEE10(String classname) {
 
         return classname.replace("ee.jakarta.tck.persistence.core", "com.sun.ts.tests.jpa.core").
                 replace("ee.jakarta.tck.persistence.entitytest", "com.sun.ts.tests.jpa.core.entitytest").

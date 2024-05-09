@@ -3,7 +3,7 @@ package tck.jakarta.platform.rewrite.mapping;
 import jakartatck.jar2shrinkwrap.ClassNameRemapping;
 
 /**
- * ClassNameRemappingImpl will map EE 10 TCK test class names to their eqivalent EE 11 names
+ * ClassNameRemappingImpl will map EE 10 TCK test class names to their equivalent EE 11 names
  *
  * @author Scott Marlow
  */
