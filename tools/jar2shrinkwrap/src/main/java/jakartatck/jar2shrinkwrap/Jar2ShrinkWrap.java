@@ -6,14 +6,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -29,6 +26,7 @@ public class Jar2ShrinkWrap {
     private static final String legacyTCKZip = "jakarta-jakartaeetck-10.0.2.zip";
     private static final URL tckurl;
     private static File legacyTckRoot;
+    private static String technology = System.getProperty("jar2shrinkwrap.technology","jpa");
 
     static {
         try {
@@ -88,7 +86,7 @@ public class Jar2ShrinkWrap {
         String packageNameWithSlashs = packageName.replace(".","/");
         File srcFolder = new File (maybeDownloadTck(), "jakartaeetck/src/" + packageNameWithSlashs);
         boolean testPackageExists = srcFolder.exists();
-        if (packageName.contains("jpa")) {
+        if (packageName.contains(technology)) {
             if (testPackageExists) {
                 return true;
             }
