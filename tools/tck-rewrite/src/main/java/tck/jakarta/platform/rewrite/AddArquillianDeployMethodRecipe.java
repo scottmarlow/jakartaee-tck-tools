@@ -88,13 +88,13 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 Set<String> methodNameSet = new HashSet<>(); // will contain set of methods in the current classDecl
                 methodNamesSet.set(methodNameSet);
                 super.visitClassDeclaration(classDecl, executionContext);
-                isEETest = false;
-                for(Iterator<String> iter = methodNameSet.iterator(); iter.hasNext(); ) {
-                    if (iter.next().contains("test")) {
-                        isEETest = true;
-                        break;
-                    }
-                }
+                isEETest = methodNameSet.stream().anyMatch(str -> str.contains("test"));
+                //for(Iterator<String> iter = methodNameSet.iterator(); iter.hasNext(); ) {
+                //    if (iter.next().contains("test")) {
+                //        isEETest = true;
+                //        break;
+                //    }
+                // }
                 methodNamesSet.set(null);
             }
 
