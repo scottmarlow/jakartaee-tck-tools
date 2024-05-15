@@ -80,7 +80,7 @@ public class Jar2ShrinkWrap {
     }
 
     public static boolean isLegacyTestPackage(String packageName) {
-        if (packageName.startsWith("ee.jakarta.tck.persistence")) {
+        if (packageName.startsWith("ee.jakarta.tck")) {
             throw new RuntimeException("EE 11 package name passed that should of been converted to EE 10 before calling.  Package name = " + packageName);
         }
         String packageNameWithSlashs = packageName.replace(".","/");
