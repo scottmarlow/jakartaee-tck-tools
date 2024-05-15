@@ -95,6 +95,7 @@ public class EarFileProcessor extends AbstractFileProcessor {
                 List<File> libraryFiles = new ArrayList<>();
                 for (String archiveName : getLibraries()) {
                     JarProcessor jarProcessor = getLibrary(archiveName);
+                    printWriter.println(newLine + indent + "{");  // we can add multiple variations of the same archive so enclose it in a code block
                     printWriter.println(newLine + indent + "JavaArchive %s = ShrinkWrap.create(JavaArchive.class, \"%s\");".formatted(archiveName(archiveName), archiveName(archiveName)));
                     for (String className: jarProcessor.getClasses()) {
                         if (!ignoreFile(className)) {
@@ -102,6 +103,7 @@ public class EarFileProcessor extends AbstractFileProcessor {
                         }
                     }
                     printWriter.println(indent.repeat(1)+"ear.addAsLibrary(%s);".formatted(archiveName(archiveName)));
+                    printWriter.println(newLine + indent + "}");  // we can add multiple variations of the same archive so enclose it in a code block
                 }
 
             }
@@ -110,6 +112,7 @@ public class EarFileProcessor extends AbstractFileProcessor {
                 printWriter.println(indent.repeat(1) + "// Add ear submodules");
                 for (String archiveName : getSubModules()) {
                     JarProcessor jarProcessor = getSubmodule(archiveName);
+                    printWriter.println(newLine + indent + "{");  // we can add multiple variations of the same archive so enclose it in a code block
                     if ( jarProcessor instanceof WarFileProcessor) {
                         jarProcessor.saveOutputWar(printWriter,includeImports, archiveName);
                     } else {
@@ -123,6 +126,7 @@ public class EarFileProcessor extends AbstractFileProcessor {
                     }
                     // add war/jar to ear
                     printWriter.println(indent+"ear.addAsModule(%s);".formatted(archiveName(archiveName)));
+                    printWriter.println(newLine + indent + "}");  // we can add multiple variations of the same archive so enclose it in a code block
                 }
             }
 

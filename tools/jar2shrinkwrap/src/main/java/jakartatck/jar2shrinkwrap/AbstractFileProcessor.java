@@ -142,11 +142,16 @@ public abstract class AbstractFileProcessor implements JarProcessor {
     protected void addLibrary(String name) {
         if (name.startsWith(WEB_INF_LIB))
             name = name.substring(WEB_INF_LIB.length());
-        libraries.add(name);
+        if (!libraries.contains(name)) {
+            libraries.add(name);
+        }
     }
 
     protected void addModule(String name) {
-        subModules.add(name);
+        if (!subModules.contains(name)) {
+            subModules.add(name);
+        }
+
     }
 
 
@@ -205,6 +210,7 @@ public abstract class AbstractFileProcessor implements JarProcessor {
 
         for (String warlibrary : getLibraries()) {
             JarProcessor warLibraryProcessor = getLibrary(warlibrary);
+            printWriter.println(newLine + indent + "{");  // we can add multiple variations of the same archive so enclose it in a code block
             printWriter.println(newLine + indent + "JavaArchive %s = ShrinkWrap.create(JavaArchive.class, \"%s\");".formatted(archiveName(warlibrary), warlibrary));
             for (String className: warLibraryProcessor.getClasses()) {
                 if (!ignoreFile(className)) {
@@ -222,6 +228,7 @@ public abstract class AbstractFileProcessor implements JarProcessor {
                 }
             }
             printWriter.println(indent.repeat(1)+"%s.addAsLibrary(%s);".formatted(archiveName(archiveName),archiveName(warlibrary)));
+            printWriter.println(newLine + indent + "}");  // we can add multiple variations of the same archive so enclose it in a code block
         }
         // add classes
         for (String className: getClasses()) {
