@@ -2,8 +2,11 @@ package tck.jakarta.platform.rewrite;
 
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import jakartatck.jar2shrinkwrap.Jar2ShrinkWrap;
 import jakartatck.jar2shrinkwrap.JarProcessor;
@@ -19,11 +22,13 @@ import tck.jakarta.platform.rewrite.mapping.ClassNameRemappingImpl;
 import tck.jakarta.platform.rewrite.mapping.EE11_2_EE10;
 
 /**
- * AddArquillianDeployMethodRecipe
+ * AddArquillianDeployMethodRecipe based on AddArquillianDeployMethod + referenced doc from https://github.com/moderneinc/rewrite-recipe-starter?tab=readme-ov-file#getting-started
  *
  * @author Scott Marlow
  */
 public class AddArquillianDeployMethodRecipe extends Recipe implements Serializable {
+
+    private static ThreadLocal<Set> methodNamesSet = new ThreadLocal<>();
 
     static final long serialVersionUID = 427023419L;
     private static String fullyQualifiedClassName = AddArquillianDeployMethodRecipe.class.getCanonicalName();
@@ -66,8 +71,39 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
 
     public class testClassVisitor extends JavaIsoVisitor<ExecutionContext> {
 
+
+
         @Override
         public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext executionContext) {
+            List<J.Modifier> modifiers = classDecl.getModifiers();
+            boolean isAbstract = modifiers.stream().anyMatch(modifier -> modifier.getType() == J.Modifier.Type.Abstract);
+
+            if (isAbstract) {
+                // Ignore refactoring abstract classes
+                return classDecl;
+            }
+
+            boolean isEETest = classDecl.getSimpleName().contains("Client"); // this will match too much but still try
+            if (isEETest) {
+                Set<String> methodNameSet = new HashSet<>(); // will contain set of methods in the current classDecl
+                methodNamesSet.set(methodNameSet);
+                super.visitClassDeclaration(classDecl, executionContext);
+                isEETest = false;
+                for(Iterator<String> iter = methodNameSet.iterator(); iter.hasNext(); ) {
+                    if (iter.next().contains("test")) {
+                        isEETest = true;
+                        break;
+                    }
+                }
+                methodNamesSet.set(null);
+            }
+
+
+            // return if this is not an EE test
+            if (!isEETest) {
+                return classDecl;
+            }
+
             // Don't make changes to classes that don't match the fully qualified name
             //if (classDecl.getType() == null || !classDecl.getType().getFullyQualifiedName().equals(fullyQualifiedClassName)) {
             //    System.out.println("classDecl.getType() (" +classDecl.getType() + ") is not equal to " + fullyQualifiedClassName);
@@ -85,15 +121,7 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 return classDecl;
             }
 
-            boolean isEETest = classDecl.getSimpleName().contains("Client"); // this will match too much but still try
 
-            List<J.Modifier> modifiers = classDecl.getModifiers();
-            boolean isAbstract = modifiers.stream().anyMatch(modifier -> modifier.getType() == J.Modifier.Type.Abstract);
-
-            // return if this is not an EE test
-            if (isAbstract || !isEETest) {
-                return classDecl;
-            }
 
             String pkg = classDecl.getType().getPackageName();
             String ee10pkg = EE11_2_EE10.mapEE11toEE10(pkg);
@@ -106,12 +134,11 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 }
                 else {
                     System.out.println("AddArquillianDeployMethodRecipe: ignoring package " + ee10pkg);
+                    return classDecl;
                 }
             } catch (RuntimeException e) {
                 e.printStackTrace();
-            }
-            // just print exception call stack for now and skip test
-            if (jarProcessor == null) {
+                // just print exception call stack for now and skip test
                 return classDecl;
             }
 
@@ -120,7 +147,7 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
             String methodCode = methodCodeWriter.toString();
             if (methodCode.length() == 0) {
                 // we shouldn't hit this case but still check for it
-                return classDecl;
+                throw new RuntimeException("AddArquillianDeployMethodRecipe generated empty code block that is supposed to handle deployment of " + classDecl.getType().getFullyQualifiedName());
             }
 
 
@@ -159,6 +186,15 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 e.printStackTrace();
             }
             return classDecl;
+        }
+
+        @Override
+        public J.MethodDeclaration visitMethodDeclaration(J.MethodDeclaration method, ExecutionContext executionContext) {
+            Set<String> methodNameSet = methodNamesSet.get();
+            if( methodNameSet != null) {
+                methodNameSet.add(method.getSimpleName().toLowerCase());
+            }
+            return super.visitMethodDeclaration(method, executionContext);
         }
     }
 }
