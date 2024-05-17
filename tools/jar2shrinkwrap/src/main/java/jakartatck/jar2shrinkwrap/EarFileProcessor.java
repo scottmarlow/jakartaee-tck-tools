@@ -99,7 +99,7 @@ public class EarFileProcessor extends AbstractFileProcessor {
                     printWriter.println(newLine + indent + "JavaArchive %s = ShrinkWrap.create(JavaArchive.class, \"%s\");".formatted(archiveName(archiveName), archiveName(archiveName)));
                     for (String className: jarProcessor.getClasses()) {
                         if (!ignoreFile(className)) {
-                            printWriter.println(indent + "%s.addClass(%s.class);".formatted(archiveName(archiveName), className));
+                            printWriter.println(indent + "%s.addClass(%s);".formatted(archiveName(archiveName), className));
                         }
                     }
                     printWriter.println(indent.repeat(1)+"ear.addAsLibrary(%s);".formatted(archiveName(archiveName)));
@@ -120,7 +120,7 @@ public class EarFileProcessor extends AbstractFileProcessor {
                         printWriter.println(newLine + indent + "JavaArchive %s = ShrinkWrap.create(JavaArchive.class, \"%s\");".formatted(archiveName(archiveName), archiveName(archiveName)));
                         for (String className: jarProcessor.getClasses()) {
                             if (!ignoreFile(className)) {
-                                printWriter.println(indent + "%s.addClass(%s.class);".formatted(archiveName(archiveName), className));
+                                printWriter.println(indent + "%s.addClass(%s);".formatted(archiveName(archiveName), className));
                             }
                         }
                     }

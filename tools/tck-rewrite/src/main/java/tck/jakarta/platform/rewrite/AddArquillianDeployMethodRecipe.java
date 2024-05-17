@@ -130,7 +130,7 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
 
                 if (Jar2ShrinkWrap.isLegacyTestPackage(ee10pkg)) {
                     // Generate the deployment() method
-                    jarProcessor = Jar2ShrinkWrap.fromPackage(ee10pkg, ClassNameRemappingImpl.getInstance());
+                    jarProcessor = Jar2ShrinkWrap.fromPackage(ee10pkg, new ClassNameRemappingImpl(classDecl.getType().getFullyQualifiedName()));
                 }
                 else {
                     System.out.println("AddArquillianDeployMethodRecipe: ignoring package " + ee10pkg);

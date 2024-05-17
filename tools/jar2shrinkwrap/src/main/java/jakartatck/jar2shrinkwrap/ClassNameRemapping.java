@@ -13,4 +13,6 @@ public interface ClassNameRemapping {
     default boolean shouldBeIgnored(String className) {
         return false;
     }
+
+    default String getTargetClassName() { return ""; }
 }

@@ -81,7 +81,7 @@ public class AddArquillianDeployMethod<ExecutionContext> extends JavaIsoVisitor<
                 String clInfo = ClassLoaderUtils.showClassLoaderHierarchy(this, "visitClassDeclaration");
                 System.out.println(clInfo);
                  */
-                JarProcessor war = Jar2ShrinkWrap.fromPackage(ee10pkg, ClassNameRemappingImpl.getInstance());
+                JarProcessor war = Jar2ShrinkWrap.fromPackage(ee10pkg, new ClassNameRemappingImpl(classDecl.getType().getFullyQualifiedName()));
                 StringWriter methodCodeWriter = new StringWriter();
                 war.saveOutput(methodCodeWriter, false);
                 String methodCode = methodCodeWriter.toString();
