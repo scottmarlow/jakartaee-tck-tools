@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakartatck.jar2shrinkwrap.EarFileProcessor;
+import jakartatck.jar2shrinkwrap.Jar2ShrinkWrap;
 import jakartatck.jar2shrinkwrap.JarFileProcessor;
 import jakartatck.jar2shrinkwrap.JarProcessor;
 import jakartatck.jar2shrinkwrap.WarFileProcessor;
@@ -189,7 +190,7 @@ public class TestGenerator {
                     JarProcessor jarProcessor = earProcessor.getSubmodule(archiveName);
                     printWriter.println(newLine + indent + "{");  // we can add multiple variations of the same archive so enclose it in a code block
                     if (jarProcessor instanceof WarFileProcessor) {
-                        jarProcessor.saveOutputWar(printWriter, includeImports, archiveName);
+                        saveOutput(jarProcessor);
                     } else {
                         // JavaArchive jar  = ShrinkWrap.create(JavaArchive.class);
                         printWriter.println(newLine + indent + "JavaArchive %s = ShrinkWrap.create(JavaArchive.class, \"%s\");".formatted(archiveName(archiveName), archiveName(archiveName)));
