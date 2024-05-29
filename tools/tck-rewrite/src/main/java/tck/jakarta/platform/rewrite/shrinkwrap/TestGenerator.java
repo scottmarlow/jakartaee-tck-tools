@@ -74,28 +74,14 @@ public class TestGenerator {
                 }
             }
             printWriter.println("}");
-            return printWriter.toString();
+            return writer.toString();
         }
     }
 
-    public static String saveOutput(WarFileProcessor warProcessor) {
-        boolean includeImports = false;
-        StringWriter writer = new StringWriter();
-        final String indent = " ";
+    public static void saveOutputWar(WarFileProcessor warProcessor, PrintWriter printWriter ) {
+        String archiveName =  warProcessor.getArchivePath().toFile().getName();
         final String newLine = "\n";
-
-        try (PrintWriter printWriter = new PrintWriter(writer)) {
-            if(includeImports) {
-                printWriter.println("import org.jboss.arquillian.container.test.api.Deployment;");
-                printWriter.println("import org.jboss.shrinkwrap.api.ShrinkWrap;");
-                printWriter.println("import org.jboss.shrinkwrap.api.spec.JavaArchive;");
-                printWriter.println("import org.jboss.shrinkwrap.api.spec.WebArchive;\n");
-                printWriter.println("import jakartatck.jar2shrinkwrap.LibraryUtil;\n");
-            }
-
-            printWriter.println(indent+"@Deployment(testable = false)");
-            printWriter.println(indent+"public static WebArchive getTestArchive() throws Exception {");
-            String archiveName =  warProcessor.getArchivePath().toFile().getName();
+        final String indent = " ";
             // WebArchive war = ShrinkWrap.create(WebArchive.class, name)
             printWriter.println(newLine + indent + "WebArchive %s = ShrinkWrap.create(WebArchive.class, \"%s\");".formatted(archiveName(archiveName), archiveName(archiveName)));
             for (String webinfFile : warProcessor.getWebinf()) {
@@ -137,8 +123,28 @@ public class TestGenerator {
                     printWriter.println(indent + "%s.addClass(%s);".formatted(archiveName(archiveName), className));
                 }
             }
+    }
+
+    public static String saveOutput(WarFileProcessor warProcessor) {
+        boolean includeImports = false;
+        StringWriter writer = new StringWriter();
+        final String indent = " ";
+        final String newLine = "\n";
+
+        try (PrintWriter printWriter = new PrintWriter(writer)) {
+            if(includeImports) {
+                printWriter.println("import org.jboss.arquillian.container.test.api.Deployment;");
+                printWriter.println("import org.jboss.shrinkwrap.api.ShrinkWrap;");
+                printWriter.println("import org.jboss.shrinkwrap.api.spec.JavaArchive;");
+                printWriter.println("import org.jboss.shrinkwrap.api.spec.WebArchive;\n");
+                printWriter.println("import jakartatck.jar2shrinkwrap.LibraryUtil;\n");
+            }
+
+            printWriter.println(indent+"@Deployment(testable = false)");
+            printWriter.println(indent+"public static WebArchive getTestArchive() throws Exception {");
+            saveOutputWar(warProcessor, printWriter);
             printWriter.println("}");
-            return printWriter.toString();
+            return writer.toString();
         }
     }
 
@@ -190,8 +196,8 @@ public class TestGenerator {
                     JarProcessor jarProcessor = earProcessor.getSubmodule(archiveName);
                     printWriter.println(newLine + indent + "{");  // we can add multiple variations of the same archive so enclose it in a code block
                     if (jarProcessor instanceof WarFileProcessor) {
-                        saveOutput(jarProcessor);
-                    } else {
+                        saveOutputWar((WarFileProcessor)jarProcessor, printWriter);
+                     } else {
                         // JavaArchive jar  = ShrinkWrap.create(JavaArchive.class);
                         printWriter.println(newLine + indent + "JavaArchive %s = ShrinkWrap.create(JavaArchive.class, \"%s\");".formatted(archiveName(archiveName), archiveName(archiveName)));
                         for (String className : jarProcessor.getClasses()) {
