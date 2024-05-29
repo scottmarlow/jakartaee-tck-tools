@@ -20,6 +20,7 @@ import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.tree.J;
 import tck.jakarta.platform.rewrite.mapping.ClassNameRemappingImpl;
 import tck.jakarta.platform.rewrite.mapping.EE11_2_EE10;
+import tck.jakarta.platform.rewrite.shrinkwrap.TestGenerator;
 
 /**
  * AddArquillianDeployMethodRecipe based on AddArquillianDeployMethod + referenced doc from https://github.com/moderneinc/rewrite-recipe-starter?tab=readme-ov-file#getting-started
@@ -142,9 +143,8 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 return classDecl;
             }
 
-            StringWriter methodCodeWriter = new StringWriter();
-            jarProcessor.saveOutput(methodCodeWriter, false);
-            String methodCode = methodCodeWriter.toString();
+            String methodCode = TestGenerator.saveOutput(jarProcessor);
+
             if (methodCode.length() == 0) {
                 // we shouldn't hit this case but still check for it
                 throw new RuntimeException("AddArquillianDeployMethodRecipe generated empty code block that is supposed to handle deployment of " + classDecl.getType().getFullyQualifiedName());
