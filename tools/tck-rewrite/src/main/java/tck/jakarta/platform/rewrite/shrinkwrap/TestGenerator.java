@@ -26,7 +26,7 @@ public class TestGenerator {
             return saveOutput(warFileProcessor);
         } else {
             JarFileProcessor jarFileProcessor = (JarFileProcessor)jarProcessor;
-            return saveOutput(jarProcessor);
+            return saveOutput(jarFileProcessor);
         }
     }
 
