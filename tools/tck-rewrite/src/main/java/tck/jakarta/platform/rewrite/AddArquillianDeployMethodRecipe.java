@@ -1,11 +1,16 @@
 package tck.jakarta.platform.rewrite;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 
 import jakartatck.jar2shrinkwrap.Jar2ShrinkWrap;
@@ -143,6 +148,8 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 return classDecl;
             }
 
+            Set<String> vehicleNames = testVehicles(ee10pkg);
+            System.out.println("xxx vehicleNames for " + ee10pkg + " = " + vehicleNames);
             String methodCode = TestGenerator.saveOutput(jarProcessor);
 
             if (methodCode.length() == 0) {
@@ -186,6 +193,43 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 e.printStackTrace();
             }
             return classDecl;
+        }
+
+        private Set<String> testVehicles(String ee10pkg) {
+            File vehiclePropertiesFile = Jar2ShrinkWrap.getEETestVehiclesFile();
+            Properties properties = new Properties();
+            try {
+                properties.load(new FileInputStream(vehiclePropertiesFile));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String testPackage = ee10pkg.replace(".","/");
+            boolean foundTestVehicles = false;
+            String vehicles = null;
+            while(!foundTestVehicles) {
+                vehicles = properties.getProperty(testPackage);
+                foundTestVehicles = vehicles != null;
+                if (!foundTestVehicles) {
+                    testPackage = testPackage.substring(0, testPackage.lastIndexOf("/"));
+                } else {
+                    if(vehicles.contains(".java")) {
+                        // TODO: deal with vehicle mappings that are specified at the test class + test method name level.  Like the following:
+                        //  com/sun/ts/tests/jpa/core/entityManager/Client.java#mergeTest = appmanagedNoTx pmservlet stateless3
+                        //  com/sun/ts/tests/jpa/core/entityManager/Client.java#setPropertyTest = stateless3 stateful3 appmanaged puservlet appmanagedNoTx
+                        //  com/sun/ts/tests/jpa/core/enums/Client.java#setgetFlushModeEntityManagerTest = stateless3 stateful3 appmanaged puservlet appmanagedNoTx
+                        //  com/sun/ts/tests/jpa/core/StoredProcedureQuery/Client.java#executeUpdateTransactionRequiredExceptionTest = appmanagedNoTx pmservlet puservlet stateless3
+                        throw new IllegalStateException("named test" + ee10pkg);
+                    }
+                }
+            }
+            if (vehicles == null) {
+                if(ee10pkg.contains("jstl")) {
+                    throw new IllegalStateException("Add web handling for the jstl tests in package " + ee10pkg);
+                } else {
+                    throw new IllegalStateException("no test vehicles found for package " + ee10pkg);
+                }
+            }
+            return new HashSet<String> (Arrays.asList(vehicles.split(" ")));
         }
 
         @Override
