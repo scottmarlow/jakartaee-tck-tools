@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -78,7 +76,6 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
     public class testClassVisitor extends JavaIsoVisitor<ExecutionContext> {
 
 
-
         @Override
         public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext executionContext) {
             List<J.Modifier> modifiers = classDecl.getModifiers();
@@ -128,7 +125,6 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
             }
 
 
-
             String pkg = classDecl.getType().getPackageName();
             String ee10pkg = EE11_2_EE10.mapEE11toEE10(pkg);
             JarProcessor jarProcessor = null;
@@ -137,8 +133,7 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
                 if (Jar2ShrinkWrap.isLegacyTestPackage(ee10pkg)) {
                     // Generate the deployment() method
                     jarProcessor = Jar2ShrinkWrap.fromPackage(ee10pkg, new ClassNameRemappingImpl(classDecl.getType().getFullyQualifiedName()));
-                }
-                else {
+                } else {
                     System.out.println("AddArquillianDeployMethodRecipe: ignoring package " + ee10pkg);
                     return classDecl;
                 }
@@ -203,39 +198,42 @@ public class AddArquillianDeployMethodRecipe extends Recipe implements Serializa
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            String testPackage = ee10pkg.replace(".","/");
+            String testPackage = ee10pkg.replace(".", "/");
             boolean foundTestVehicles = false;
             String vehicles = null;
-            while(!foundTestVehicles) {
+            while (!foundTestVehicles) {
                 vehicles = properties.getProperty(testPackage);
                 foundTestVehicles = vehicles != null;
                 if (!foundTestVehicles) {
-                    testPackage = testPackage.substring(0, testPackage.lastIndexOf("/"));
-                } else {
-                    if(vehicles.contains(".java")) {
-                        // TODO: deal with vehicle mappings that are specified at the test class + test method name level.  Like the following:
-                        //  com/sun/ts/tests/jpa/core/entityManager/Client.java#mergeTest = appmanagedNoTx pmservlet stateless3
-                        //  com/sun/ts/tests/jpa/core/entityManager/Client.java#setPropertyTest = stateless3 stateful3 appmanaged puservlet appmanagedNoTx
-                        //  com/sun/ts/tests/jpa/core/enums/Client.java#setgetFlushModeEntityManagerTest = stateless3 stateful3 appmanaged puservlet appmanagedNoTx
-                        //  com/sun/ts/tests/jpa/core/StoredProcedureQuery/Client.java#executeUpdateTransactionRequiredExceptionTest = appmanagedNoTx pmservlet puservlet stateless3
-                        throw new IllegalStateException("named test" + ee10pkg);
+                    // remove one package segment at a time until there are none left
+                    if (testPackage.contains("/")) {
+                        testPackage = testPackage.substring(0, testPackage.lastIndexOf("/"));
+                    } else {
+                        break;
                     }
+                } else if (vehicles.contains(".java")) {
+                    // TODO: deal with vehicle mappings that are specified at the test class + test method name level.  Like the following:
+                    //  com/sun/ts/tests/jpa/core/entityManager/Client.java#mergeTest = appmanagedNoTx pmservlet stateless3
+                    //  com/sun/ts/tests/jpa/core/entityManager/Client.java#setPropertyTest = stateless3 stateful3 appmanaged puservlet appmanagedNoTx
+                    //  com/sun/ts/tests/jpa/core/enums/Client.java#setgetFlushModeEntityManagerTest = stateless3 stateful3 appmanaged puservlet appmanagedNoTx
+                    //  com/sun/ts/tests/jpa/core/StoredProcedureQuery/Client.java#executeUpdateTransactionRequiredExceptionTest = appmanagedNoTx pmservlet puservlet stateless3
+                    throw new IllegalStateException("named test" + ee10pkg);
                 }
             }
             if (vehicles == null) {
-                if(ee10pkg.contains("jstl")) {
+                if (ee10pkg.contains("jstl")) {
                     throw new IllegalStateException("Add web handling for the jstl tests in package " + ee10pkg);
                 } else {
                     throw new IllegalStateException("no test vehicles found for package " + ee10pkg);
                 }
             }
-            return new HashSet<String> (Arrays.asList(vehicles.split(" ")));
+            return new HashSet<String>(Arrays.asList(vehicles.split(" ")));
         }
 
         @Override
         public J.MethodDeclaration visitMethodDeclaration(J.MethodDeclaration method, ExecutionContext executionContext) {
             Set<String> methodNameSet = methodNamesSet.get();
-            if( methodNameSet != null) {
+            if (methodNameSet != null) {
                 methodNameSet.add(method.getSimpleName().toLowerCase());
             }
             return super.visitMethodDeclaration(method, executionContext);
