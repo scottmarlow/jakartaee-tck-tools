@@ -35,7 +35,7 @@ public class Version {
             I18NResourceBundle.getBundleForClass(Version.class);
 
     // the following constatnts should be filled in by the build script
-    public static final String Number="2.2";
+    public static final String Number="2.4";
     public static final String build_time="";
     public static final String build_os="";
     public static final String build_user="";
