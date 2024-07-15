@@ -55,7 +55,7 @@ public class WarFileProcessor extends AbstractFileProcessor {
             }
 
             printWriter.println(indent+"@Deployment(testable = false)");
-            printWriter.println(indent+"public static WebArchive getWarTestArchive() throws Exception {");
+            printWriter.println(indent+"public static WebArchive getTestArchive() throws Exception {");
             saveOutputWar(printWriter,includeImports, archiveFile.getName());
             printWriter.println("}");
         }

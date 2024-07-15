@@ -12,6 +12,7 @@ import org.openrewrite.test.RewriteTest;
 
 import org.openrewrite.xml.ChangeTagContentVisitor;
 import tck.jakarta.platform.rewrite.AddArquillianDeployMethod;
+import tck.jakarta.platform.rewrite.AddArquillianDeployMethodRecipe;
 import tck.jakarta.platform.rewrite.ConvertJavaTestNameRecipe;
 import tck.jakarta.platform.rewrite.ConvertJavaTestNameVisitor;
 import tck.jakarta.platform.rewrite.JavaTestToArquillianShrinkwrap;
@@ -29,7 +30,7 @@ public class AddArqDeploymentTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         Path testClasses = Paths.get("/Users/starksm/Dev/Jakarta/tck-rewrite-tools/target", "test-classes");
 
-        Recipe[] toRun = {new JavaTestToArquillianShrinkwrap(), new ConvertJavaTestNameRecipe()};
+        Recipe[] toRun = {new AddArquillianDeployMethodRecipe(), new ConvertJavaTestNameRecipe()};
         CompositeRecipe testRecipes = new CompositeRecipe(Arrays.asList(toRun));
 
         spec.recipe(testRecipes)
@@ -76,30 +77,30 @@ public class AddArqDeploymentTest implements RewriteTest {
                                             // Add ear submodules
                                     
                                             JavaArchive ejb_bb_ssl_argsemantics_client_jar = ShrinkWrap.create(JavaArchive.class, "ejb_bb_ssl_argsemantics_client_jar");
-                                            ejb_bb_ssl_argsemantics_client_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBean.class);
                                             ejb_bb_ssl_argsemantics_client_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBeanHome.class);
+                                            ejb_bb_ssl_argsemantics_client_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBean.class);
                                             ejb_bb_ssl_argsemantics_client_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.Client.class);
                                             ear.addAsModule(ejb_bb_ssl_argsemantics_client_jar);
                                     
                                             JavaArchive ejb_bb_ssl_argsemantics_ejb_jar = ShrinkWrap.create(JavaArchive.class, "ejb_bb_ssl_argsemantics_ejb_jar");
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBean.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBeanEJB.class);
                                             ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBeanHome.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20Callee.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeEJB.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeHome.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeLocal.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeLocalHome.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.SimpleArgument.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCallee.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCalleeEJB.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCalleeHome.class);
                                             ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCalleeLocal.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCalleeLocalHome.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.wrappers.CMP20Wrapper.class);
-                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.wrappers.StatefulWrapper.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCalleeHome.class);
                                             ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.wrappers.StatelessWrapper.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeHome.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCallee.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeLocalHome.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCalleeLocalHome.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeEJB.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.StatefulCalleeEJB.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBeanEJB.class);
                                             ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.testlogic.ejb.bb.argsemantics.TestLogic.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.SimpleArgument.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.wrappers.CMP20Wrapper.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20CalleeLocal.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.calleebeans.CMP20Callee.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.common.ejb.wrappers.StatefulWrapper.class);
+                                            ejb_bb_ssl_argsemantics_ejb_jar.addClass(com.sun.ts.tests.ejb.ee.bb.session.stateless.argsemantics.CallerBean.class);
                                             ear.addAsModule(ejb_bb_ssl_argsemantics_ejb_jar);
                                             return ear;                 
                                         }

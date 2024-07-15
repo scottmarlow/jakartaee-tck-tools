@@ -28,7 +28,7 @@ public class Jar2ShrinkWrap {
     private static final String legacyTCKZip = "jakarta-jakartaeetck-10.0.2.zip";
     private static final URL tckurl;
     private static File legacyTckRoot;
-    private static String technology = System.getProperty("jar2shrinkwrap.technology","jpa");
+    private static String technology = System.getProperty("jar2shrinkwrap.technology","ejb              ");
 
     static {
         try {
