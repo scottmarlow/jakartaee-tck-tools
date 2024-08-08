@@ -262,6 +262,15 @@ public class Utils {
                             continue;
                         }
                     }
+                    // JPA hack
+                    if(clazz.contains("ee.jakarta.tck.persistence") && clazz.endsWith(".Client.class")) {
+                        System.out.println("xxx set a breakpoint here: " + clazz);
+                        String testClassName = System.getProperty("testpackage.classname") + ".class";
+                        System.out.println("clazz " + clazz + " needs to be updated with " + testClassName);
+                        if (!clazz.equals(testClassName)) {
+                                    clazz = testClassName;
+                        }
+                    }
                     classes.add(clazz);
                 }
             }
