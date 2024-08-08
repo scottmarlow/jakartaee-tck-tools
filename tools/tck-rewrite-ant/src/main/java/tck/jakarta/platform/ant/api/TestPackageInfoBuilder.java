@@ -308,6 +308,7 @@ public class TestPackageInfoBuilder {
     private DeploymentMethodInfo parseVehiclePackage(PackageTarget pkgTargetWrapper, Class<?> clazz, VehicleType vehicleType) {
         pkgTargetWrapper.execute(vehicleType);
         String protocol = getProtocolForVehicle(vehicleType);
+        System.setProperty("testpackage.classname",clazz.getName());
         String testClassSimpleName = clazz.getSimpleName();
         // Extract the information for the current deployment from the parsed ts.vehicles info
         DeploymentInfo deployment = new DeploymentInfo(clazz, pkgTargetWrapper.getDeploymentName(), protocol, vehicleType);
